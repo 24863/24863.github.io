@@ -10,60 +10,103 @@ thumbnail: adam-blog.jpg
 license: GNU General Public License v3.0
 license_link: https://github.com/artemsheludko/adam-blog/blob/master/LICENSE
 ---
-# Jekyll theme: Adam Blog 2.0
-[V1.0](https://github.com/artemsheludko/adam-blog) by [Artem Sheludko](https://github.com/artemsheludko), modified by [Armando Maynez](https://github.com/amaynez)
+All of the standard Liquid [filters](#standard-liquid-filters) are supported (see below).
 
-### Additional features in v2.0:
-- automatic [sitemap.xml](http://the-mvm.github.io/sitemap.xml)
-- automatic [archive page](http://the-mvm.github.io/archive/) with infinite scrolling capability
-- [new page](https://the-mvm.github.io/tag/?tag=Coding) of posts filtered by a single tag (without needing autopages from paginator V2), also with infinite scrolling
-- custom and responsive [404 page](https://the-mvm.github.io/404.html)
-- included linkedin and reddit icons for contact and sharing
-- automatic Table of Contents (optional). It behaves as a sticky sidebar (when the screen is wide enough) or inline after the post's title and metadata
-- post tags and social share icons are now a sticky sidebar when the screen resolution permits
-- MathJax support (optional per post)
-- view on github link button (optional per post)
-- read time per post automatically calculated
-- SEO meta tags
-- tag cloud in the home page
-- 'back to top' button
-- comments 'courtain' to mask the disqus interface until the user clicks on it ([configurable in _config.yml](https://github.com/the-mvm/the-mvm.github.io/blob/e146070e9348c2e8f46cb90e3f0c6eb7b59c041a/_config.yml#L29))
-- [CSS variables](https://github.com/the-mvm/the-mvm.github.io/blob/e146070e9348c2e8f46cb90e3f0c6eb7b59c041a/assets/css/main.css#L3) to make it easy to customize colors and fonts
-- added several pygments themes for code syntax highlight [configurable from the _config.yml file](https://github.com/the-mvm/the-mvm.github.io/blob/e146070e9348c2e8f46cb90e3f0c6eb7b59c041a/_config.yml#L44).
-- responsive footer menu and footer logo ([if setup in the config file](https://github.com/the-mvm/the-mvm.github.io/blob/e146070e9348c2e8f46cb90e3f0c6eb7b59c041a/_config.yml#L7))
+To make common tasks easier, Jekyll even adds a few handy filters of its own,
+all of which you can find on this page. You can also create your own filters
+using [plugins](/docs/plugins/).
 
-### Features from v1.0
-- [Google Fonts](https://fonts.google.com/)
-- [Font Awesome icons](http://fontawesome.io/)
-- [Disqus](https://disqus.com/)
-- [MailChimp](https://mailchimp.com/)
-- [Analytics](https://analytics.google.com/analytics/web/)
-- [Search](https://github.com/christian-fei/Simple-Jekyll-Search)
+<div class="mobile-side-scroller">
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th><span class="filter">Filter</span> and <span class="output">Output</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for filter in site.data.jekyll_filters %}
+      <tr>
+        <td>
+          <p id="{{ filter.name | slugify }}" class="name"><strong>{{ filter.name }}</strong></p>
+          <p>
+            {{- filter.description -}}
+            {%- if filter.version_badge %}
+              <span class="version-badge" title="This filter is available from version {{ filter.version_badge }}">
+                {{- filter.version_badge -}}
+              </span>
+            {% endif -%}
+          </p>
+        </td>
+        <td class="align-center">
+          {%- for example in filter.examples %}
+            <p><code class="filter">{{ example.input }}</code></p>
+            {% if example.output %}<p><code class="output">{{ example.output }}</code></p>{% endif %}
+          {% endfor -%}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
 
-### Demo
+### Options for the `slugify` filter
 
-Check the theme in action [Demo](https://the-mvm.github.io/)
+The `slugify` filter accepts an option, each specifying what to filter.
+The default is `default`. They are as follows (with what they filter):
 
-The main page looks like this:
+- `none`: no characters
+- `raw`: spaces
+- `default`: spaces and non-alphanumeric characters
+- `pretty`: spaces and non-alphanumeric characters except for `._~!$&'()+,;=@`
+- `ascii`: spaces, non-alphanumeric, and non-ASCII characters
+- `latin`: like `default`, except Latin characters are first transliterated (e.g. `àèïòü` to `aeiou`) {%- include docs_version_badge.html version="3.7.0" -%}.
 
-<img width="540px" src="https://github.com/the-mvm/the-mvm.github.io/blob/main/assets/img/template_screenshots/homepage.jpg?raw=true">
+### Detecting `nil` values with `where` filter {%- include docs_version_badge.html version="4.0" -%}
 
-The post page looks like:
+You can use the `where` filter to detect documents and pages with properties that are `nil` or `""`. For example,
 
-<img width="540px" src="https://github.com/the-mvm/the-mvm.github.io/blob/main/assets/img/template_screenshots/post.jpg?raw=true">
+{% raw %}
+```liquid
+// Using `nil` to select posts that either do not have `my_prop`
+// defined or `my_prop` has been set to `nil` explicitly.
+{% assign filtered_posts = site.posts | where: 'my_prop', nil %}
+```
+{% endraw %}
 
-<img width="540px" src="https://github.com/the-mvm/the-mvm.github.io/blob/main/assets/img/template_screenshots/post_bottom.jpg?raw=true">
+{% raw %}
+```liquid
+// Using Liquid's special literal `empty` or `blank` to select
+// posts that have `my_prop` set to an empty value.
+{% assign filtered_posts = site.posts | where: 'my_prop', empty %}
+```
+{% endraw %}
 
-Custom responsive 404:
+### Binary operators in `where_exp` filter {%- include docs_version_badge.html version="4.0" -%}
 
-<img width="540px" src="https://github.com/the-mvm/the-mvm.github.io/blob/main/assets/img/template_screenshots/404.jpg?raw=true">
+You can use Liquid binary operators `or` and `and` in the expression passed to the `where_exp` filter to employ multiple
+conditionals in the operation.
 
-<img width="200px" src="https://github.com/the-mvm/the-mvm.github.io/blob/main/assets/img/template_screenshots/404-mobile.jpg?raw=true">
+For example, to get a list of documents on English horror flicks, one could use the following snippet:
 
-## Installation:
+{% raw %}
+```liquid
+{{ site.movies | where_exp: "item", "item.genre == 'horror' and item.language == 'English'" }}
+```
+{% endraw %}
 
-1. [Fork this repository](https://github.com/the-mvm/the-mvm.github.io/fork/) into your own account (if you use as destination a repository named **USERNAME.github.io** then your url will be ``username.github.io``, else ``username.github.io/REPONAME/``)
-2. Modify ``_config.yml`` with your data
-3. Use the files inside of the ``/_posts/`` directory as templates to modify and create your own blog posts.
-4. Delete images inside of ``/assets/img/posts/`` and upload your own images for your posts.
-5. Make sure Github Pages are turned on in the repository settings, and pointing to the main or master branch (where you cloned this repo)
+Or to get a list of comic-book based movies, one may use the following:
+
+{% raw %}
+```liquid
+{{ site.movies | where_exp: "item", "item.sub_genre == 'MCU' or item.sub_genre == 'DCEU'" }}
+```
+{% endraw %}
+
+### Standard Liquid Filters
+
+For your convenience, here is the list of all [Liquid filters]({{ page.shopify_filter_url }}) with links to examples in the official Liquid documentation.
+
+{% for filter in page.shopify_filters %}
+- [{{ filter }}]({{ filter | prepend: page.shopify_filter_url | append: '/' }})
+{% endfor %}
