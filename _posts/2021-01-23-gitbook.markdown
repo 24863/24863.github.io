@@ -11,22 +11,97 @@ license: Apache-2.0 License
 license_link: https://github.com/sighingnow/jekyll-gitbook/blob/master/LICENSE
 ---
 
-[GitBook][gitbook] is an amazing frontend style to present and organize contents (such as
-book chapters and blogs) on Web. The typical to deploy GitBook at [Github Pages][github-pages]
-is building HTML files locally and then push to Github repository, usually to
-the gh-pages branch. It's quite annoying to repeat such workload and make it hard
-for people do version control via git for when there are generated HTML files
-to be staged in and out.
+Liquid Filters
+All of the standard Liquid filters are supported (see below).
 
-This theme brings the Gitbook style to [Jekyll][jekyll], by taking style definition out of
-generated GitBook site and provided the template for [Jekyll][jekyll] to rendering
-markdown documents to HTML, thus the whole site can be deployed to Github Pages without
-generating and uploading HTML bundle every time when there are changes to the original repo.
+To make common tasks easier, Jekyll even adds a few handy filters of its own, all of which you can find on this page. You can also create your own filters using plugins.
 
-This theme suites for Github pages, as well as other sites that use Jekyll as generate.
 
-For more info checkout github repository [sighingnow/jekyll-gitbook][repo]. Also visit
-the [live demo][demo] site for the theme.
+
+Relative URL
+
+Prepend baseurl config value to the input to convert a URL path into a relative URL. This is recommended for a site that is hosted on a subpath of a domain.
+
+{{ "/assets/style.css" | relative_url }}
+
+/my-baseurl/assets/style.css
+
+Absolute URL
+
+Prepend url and baseurl values to the input to convert a URL path to an absolute URL.
+
+{{ "/assets/style.css" | absolute_url }}
+
+http://example.com/my-baseurl/assets/style.css
+
+Date to XML Schema
+
+Convert a Date into XML Schema (ISO 8601) format.
+
+{{ site.time | date_to_xmlschema }}
+
+2008-11-07T13:07:54-08:00
+
+
+Date to RFC-822 Format
+
+Convert a Date into the RFC-822 format used for RSS feeds.
+
+{{ site.time | date_to_rfc822 }}
+
+Mon, 07 Nov 2008 13:07:54 -0800
+
+Date to String
+
+Convert a date to short format.
+
+{{ site.time | date_to_string }}
+
+07 Nov 2008
+
+Date to String in ordinal US style
+
+Format a date to ordinal, US, short format.
+
+{{ site.time | date_to_string: "ordinal", "US" }}
+
+Nov 7th, 2008
+
+Date to Long String
+
+Format a date to long format.
+
+{{ site.time | date_to_long_string }}
+
+07 November 2008
+
+Date to Long String in ordinal UK style
+
+Format a date to ordinal, UK, long format.
+
+{{ site.time | date_to_long_string: "ordinal" }}
+
+7th November 2008
+
+Where
+
+Select all the objects in an array where the key has the given value.
+
+{{ site.members | where:"graduation_year","2014" }
+
+Where Expression
+
+Select all the objects in an array where the expression is true.
+
+{{ site.members | where_exp:"item",
+"item.graduation_year == 2014" }}
+
+{{ site.members | where_exp:"item",
+"item.graduation_year < 2014" }}
+
+{{ site.members | where_exp:"item",
+"item.projects contains 'foo'" }}
+
 
 <!-- External links -->
 [gitbook]: https://github.com/GitbookIO/gitbook
